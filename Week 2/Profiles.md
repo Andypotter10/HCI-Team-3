@@ -1,7 +1,7 @@
 |      Attributes      |                                    Data                              |
 |----------------------|----------------------------------------------------------------------|
 | Name                 |                                Not relevant                          |
-| Age                  |                                   7 - 8                              |
+| Age                  |                                   5 - 6                              |
 | Gender               |                                Not relevant                          |
 | Academic Degree      |                          Elementary school students                  |
 | Location             |                                  Yucatán                             |
