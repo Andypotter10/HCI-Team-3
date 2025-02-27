@@ -1,12 +1,11 @@
 |      Attributes      |                                    Data                              |
 |----------------------|----------------------------------------------------------------------|
 | Name                 |                                Not relevant                          |
-| Age                  |                                Not relevant                          |
+| Age                  |                                   7 - 8                              |
 | Gender               |                                Not relevant                          |
-| Academic Degree      |                          elementary school students                  |
+| Academic Degree      |                          Elementary school students                  |
 | Location             |                                  Yucatán                             |
-| Math Knowledge       |                  first and second grade of primary school            |
+| Math Knowledge       |                  First and second grade of primary school            |
 | Economic Status      |                                Not Relevant                          |
 | Family               |                                Not Relevant                          |
 | Goals                |                                Not relevant                          |
-| English Knowledge    |                                Not relevant                          |
