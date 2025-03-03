@@ -1,17 +1,17 @@
 # Development of a second version of a Physical Prototype
 
-A first version of the physical game prototype was created using parts from other board games, which were adapted to function in the same way as the original *Más Menos Pingüinos* game.
+A second version of the prototype was created using printable components with more attractive designs, as this version will be tested with children.
 
 ## Components
 
-<img src="assets/craftable_dice.png" width="150px">
+<img src="assets/craftable_dice.png" width="300px">
 
 ### Dice
 
-<img src="assets/craftable_penguin.png" width="150px">
+<img src="assets/craftable_penguin.png" width="450px">
 
 ### Penguin
 
-<img src="assets/printable_tiles.png" width="150px">
+<img src="assets/printable_tiles.png" width="450px">
 
 ### Tiles
