@@ -4,14 +4,14 @@ A first version of the physical game prototype was created using parts from othe
 
 ## Components
 
-<img src="assets/craftable_dice.jpg" width="150px">
+<img src="assets/craftable_dice.png" width="150px">
 
 ### Dice
 
-<img src="assets/craftable_penguin.jpg" width="150px">
+<img src="assets/craftable_penguin.png" width="150px">
 
 ### Penguin
 
-<img src="assets/printable_tiles.jpg" width="150px">
+<img src="assets/printable_tiles.png" width="150px">
 
 ### Tiles
