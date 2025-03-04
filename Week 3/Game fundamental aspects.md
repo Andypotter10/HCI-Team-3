@@ -1,7 +1,7 @@
 ## Fundamental Aspects of *más o menos pinguinos*  
 
 ### Educational Objectives  
-- Reinforcement of arithmetic skills, specifically addition and subtraction for students aged 6 to 7.  
+- Reinforcement of arithmetic skills, specifically addition and subtraction for students aged 5 to 7.  
 - Encouragement of skills such as partial counting and mental calculation.  
 
 ### Game Components  
