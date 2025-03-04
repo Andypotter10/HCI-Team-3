@@ -1,23 +1,29 @@
-## Fundamental Aspects of *más o menos pinguinos*  
+# More Less Penguins - Key Aspects
 
-### Educational Objectives  
-- Reinforcement of arithmetic skills, specifically addition and subtraction for students aged 5 to 7.  
-- Encouragement of skills such as partial counting and mental calculation.  
+## General
+- Game developed for mobile devices.
+- Physical version to identify fundamental aspects.
+- Real test with the physical version.
 
-### Game Components  
-- Accessible and tangible elements such as a board and tokens that facilitate classroom implementation.  
-- Specific characteristics of each component that contribute to the overall objective of the game.  
+## Gameplay
+- Minimum of two players.
+- Players must be able to arrange the tiles before starting to form the path.
+- Penguins move one tile at a time to track steps.
+- Upon completing a game, players progress to the next level with increased difficulty.
 
-### Learning Method  
-- Use of playful strategies that promote interest and motivation in learning mathematics.  
-- Implementation of peer assessment, where students correct each other, fostering attention and reflection on the mathematical operations of other players.  
+## Mechanics
+- Number of dice faces proportional to educational level.
+- Every X turns, previously rolled dice values repeat in reverse order.
+- When performing a subtraction, the larger number must always be positive.
 
-### Game Design and Dynamics  
-- Integration of clear rules and tactical strategies that require reasoning.  
-- Adjustments in game dynamics, such as the speed of progress on the board, which can enhance the user experience.  
+## Validations and Rules
+- Both players validate the result when rolling the dice.
+- If the player who rolled the dice solves correctly and the opponent validates, they advance.
+- If the player who rolled solves incorrectly and the opponent validates as correct, both move backward.
+- If the player who rolled solves incorrectly and the opponent detects it, only the rolling player moves backward.
 
-### Impact on Learning  
-- Promotion of a pleasant and meaningful learning environment that counteracts previous negative experiences with mathematics.  
-- Playful activities presented as an alternative to traditional methods, showing positive results in learning.  
-
-
+## Incentives and Tracking
+- Reward system to encourage continued play.
+- Suggested to save achievements, such as the fastest turn.
+- Background scenery changes when a penguin moves to a new tile.
+- Track relevant values such as time between turns and movement patterns.
