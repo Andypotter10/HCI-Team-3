@@ -1,4 +1,4 @@
-# More Less Penguins - Key Aspects
+# Más menos pingüinos - Key Aspects
 
 - Minimum of two players.
 - Players must be able to arrange the tiles before starting to form the path.
