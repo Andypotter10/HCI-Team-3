@@ -19,11 +19,11 @@
 1. Number of interruptions during the game:
 2. Total number of correctly solved operations:
 3. Total number of errors in operations:
-4. Number of times the child requested help:
-5. Method used by the child to count:
+4. Number of times the childs requested help:
+5. Method used by the childs to count:
 
 ## Additional Data:
 - Social interactions: Positive/Negative/Collaboration/Competition
-- Level of interest: Low - Medium - High
+- Level of interest: Low/Medium/High
 - Common errors:
 
