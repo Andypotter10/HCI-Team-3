@@ -1,8 +1,8 @@
-# Stages Definition
+# Scenarios Definition
 
 ## Agreement in Calculation
 
-Juan and Sofia sit down to play the board game with their penguin pieces at the starting position. Juan rolls the dice first, and the result is a green 3 and a green 5. Since both dice are green, they add up to 8. Sofia checks the result and agrees that it is correct. Juan moves his penguin forward 8 spaces on the board. Now it’s Sofia’s turn.
+Juan and Sofia sit down to play the board game with their penguin pieces at the starting position. Juan rolls the dice first, resulting in a green 3 and a green 5. Since both dice are green, they add up to 8. Sofia checks the result and agrees that it is correct. Juan moves his penguin forward 8 spaces on the board. Now it’s Sofia’s turn.
 
 Sofia rolls the dice and gets a red 2 and a green 6. Since the dice are different colors, she subtracts the numbers: 6 - 2 = 4. Juan verifies the result and also confirms it. Sofia moves her penguin forward 4 spaces.
 
