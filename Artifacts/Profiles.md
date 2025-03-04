@@ -8,5 +8,4 @@
 | Technology Knowledge |                                Low - Medium                          |
 | Technological devices|                           At least 1 mobile device                   |
 | Family               |                                Not Relevant                          |
-| Goals                |                             Improve Math Skills                      |
 | Description          |                                Not relevant                          |
