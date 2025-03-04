@@ -1,11 +1,12 @@
 |      Attributes      |                                    Data                              |
 |----------------------|----------------------------------------------------------------------|
 | Name                 |                                Not relevant                          |
-| Age                  |                                   5 - 6                              |
+| Age                  |                                   5 - 7                              |
 | Gender               |                                Not relevant                          |
-| Academic Degree      |                          Elementary school students                  |
+| Academic Degree      |                1st and 2nd Year elementary school students           |
 | Location             |                                  Yucatán                             |
-| Math Knowledge       |                  First and second grade of primary school            |
-| Economic Status      |                                Not Relevant                          |
+| Technology Knowledge |                                Low - Medium                          |
+| Technological devices|                           At least 1 mobile device                   |
 | Family               |                                Not Relevant                          |
-| Goals                |                                Not relevant                          |
+| Goals                |                             Improve Math Skills                      |
+| Description          |                                Not relevant                          |
