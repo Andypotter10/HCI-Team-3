@@ -52,7 +52,7 @@
 | **Gender**                   | Male                                          |
 | **Academic Grade**           | 2nd Grade Elementary School                   |
 | **Location**                 | Mérida, Yucatán                               |
-| **Technological Knowledge**  | High                                          |
+| **Technological Knowledge**  | Medium                                        |
 | **Economic Status**          | Supported by his family                       |
 | **Family**                   | Mother and grandmother                        |
 | **Goals**                    | Mateo enjoys using digital devices but prefers games over studying. Integrating educational games that reinforce math concepts could make learning more appealing and effective for him. |
