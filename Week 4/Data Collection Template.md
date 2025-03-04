@@ -1,24 +1,29 @@
-## Datos del Participante:
-- Nombre del niño:
-- Edad:
-- Nivel Educativo:
+## Participant Data:
+- Names:
+- Ages:
+- Educational Levels:
 
-## Condiciones del Experimento:
-- Fecha del experimento:
-- Tipo de juego: Físico / Digital
-- Observador:
+## Experiment Conditions:
+- Experiment Date:
+- Game Type: Physical / Digital
+- Observer:
 
-## Datos de Desempeño:
-1. Tiempo total de una partida:
-2. Número de interrupciones durante la partida:
-3. Tiempo promedio en resolver una operación:
-4. Número total de operaciones resueltas correctamente:
-5. Número total de errores en las operaciones:
-6. Cantidad de veces en las que el niño solicitó ayuda
-7. Manera en la que el niño cuenta:
+## Performance Data in a game without interventions:
+1. Total game duration:
+2. Average time to solve an operation:
+3. Total number of correctly solved operations:
+4. Total number of errors in operations:
+5. Method used by the childs to count:
 
-## Datos Adicionales:
-- Interacciones sociales: Positivas/Negativas/Colaboración/Competencia
-- Nivel de interés:
-- Errores comunes:
+## Performance Data in a game with interventions:
+1. Number of interruptions during the game:
+2. Total number of correctly solved operations:
+3. Total number of errors in operations:
+4. Number of times the child requested help:
+5. Method used by the child to count:
+
+## Additional Data:
+- Social interactions: Positive/Negative/Collaboration/Competition
+- Level of interest: Low - Medium - High
+- Common errors:
 
