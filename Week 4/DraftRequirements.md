@@ -2,21 +2,32 @@
 
 ## Functional Requirements
 
-| ID  | Requirement           | Description                                                                                                                                                                           |
-|-----|-----------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| FR1 | Digital Board         | Display a board composed of 25 square spaces (each equivalent to 6 × 6 cm pieces) with a variable layout simulating a jigsaw puzzle.                                                  |
-| FR2 | Digital Tokens        | Include six digital tokens (penguins), each with a distinct color to represent a player, with the ability to move on the board following the game rules.                          |
-| FR3 | Digital Dice          | Simulate two dodecahedral dice with 12 faces numbered from 1 to 12; each die has 6 green faces and 6 red faces.                                                                     |
-| FR4 | Dice Roll Logic       | On each roll: if both dice show the same color, add the numbers; if they show different colors, subtract the smaller number from the larger. Sum results must be between 3–22, and subtraction results between 0–10. |
-| FR5 | Movement Rule         | Compare the result with the number 12: if the result is greater than or equal to 12, move the token two spaces; if it is less than 12, move one space.                          |
-| FR6 | Turn Management       | Determine turn order by having the player with the highest initial dice roll start first, and update each player's token position accordingly.                                     |
-| FR7 | Game Objective        | The objective is to reach the final "ice floe" (last board space) to win the game.                                                                                                  |
+| **ID**     | **Name**                  | **Description** |
+|------------|---------------------------|-----------------|
+| **FR-01**  | Dice Rolling Mechanics    | The game must allow players to roll dice with faces proportional to their educational level. |
+| **FR-02**  | Result Validation         | Both players must validate the result before the penguin moves. |
+| **FR-03**  | Movement Tracking         | Penguins must move one tile at a time, visually tracking their progress. |
+| **FR-04**  | Error Handling            | If an incorrect result is validated by mistake, movement penalties must be applied accordingly. |
+| **FR-05**  | Dynamic Backgrounds       | Background scenery must change when a penguin moves to a new tile. |
+| **FR-06**  | Tile Arrangement          | Players must be able to arrange tiles before starting the game to form the path. |
+| **FR-07**  | Turn-Based Gameplay       | Players must take turns rolling the dice and moving their penguin. |
+| **FR-08**  | Reverse Order Mechanic    | Every X turns, previously rolled dice values should repeat in reverse order. |
+| **FR-09**  | Subtraction Rule          | When performing a subtraction, the larger number must always be positive. |
+| **FR-10**  | Time Tracking             | The game should track relevant values, such as time between turns and movement patterns. |
 
 ## Non-Functional Requirements
 
-| ID   | Requirement | Description                                                                                                                                                          |
-|------|-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| NFR1 | Usability   | The interface should be intuitive and child-friendly, suitable for children aged 6 to 7, with visuals that align with the penguin and ice floe theme.              |
-| NFR2 | Performance | The application should respond immediately during dice rolls and token movements, updating the board state smoothly on each turn.                                  |
-| NFR3 | Reliability | The system must consistently and accurately enforce arithmetic (addition and subtraction) and movement rules, ensuring stable operation throughout the game.   |
-| NFR4 | Adaptability| The system should allow simulation of various board configurations, maintaining the variability of the jigsaw-like board layout.                                    |
+| **ID**     | **Name**                  | **Description** |
+|------------|---------------------------|-----------------|
+| **NFR-01** | System Performance        | The game must load each scenario in less than three seconds to ensure a smooth experience. |
+| **NFR-02** | Usability                 | The interface must be intuitive and accessible for primary school children. |
+| **NFR-03** | Error Feedback            | The game must provide clear and immediate feedback when an incorrect answer is given. |
+| **NFR-04** | Data Security             | User progress and game data must be securely stored to prevent loss or corruption. |
+| **NFR-05** | Visual and Audio Cues     | The game must include visual and audio feedback to enhance the user experience. |
+| **NFR-06** | Mobile Optimization       | The game must run efficiently on both low-end and high-end mobile devices. |
+| **NFR-07** | Multi-Device Support      | The game should be compatible across multiple screen sizes and resolutions. |
+
+
+
+
+
