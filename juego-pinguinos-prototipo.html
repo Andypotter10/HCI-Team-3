@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Pingüinos 3D - Objeción Opcional</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+        canvas {
+            display: block;
+        }
+        #ui {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+            max-width: 300px;
+        }
+        #game-phase {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        #objection-buttons {
+            margin-top: 10px;
+            display: none;
+        }
+        #continue-button {
+            background-color: #2196F3; /* Color azul para diferenciarlo */
+            margin-top: 10px;
+            display: none;
+        }
+        .player-info {
+            margin-bottom: 5px;
+        }
+        #message {
+            color: #FF9800;
+            font-weight: bold;
+            margin: 10px 0;
+            min-height: 20px;
+        }
+        #dice-container {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        #dice-container div {
+            width: 40px;
+            height: 40px;
+            color: black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 5px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 6px;
+        }
+        .dice-green {
+            background-color: #4CAF50; /* Verde */
+        }
+        .dice-red {
+            background-color: #F44336; /* Rojo */
+        }
+        #calculation-input {
+            margin: 10px 0;
+            display: none;
+        }
+        #calculation-input input {
+            width: 60px;
+            padding: 5px;
+            margin-right: 5px;
+        }
+        #camera-controls-message {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="ui">
+        <div id="game-phase">Fase de colocación del tablero</div>
+        <div class="player-info">Jugador 1: <span id="player1-position">Inicio</span></div>
+        <div class="player-info">Jugador 2: <span id="player2-position">Inicio</span></div>
+        <div id="turn-info">Turno actual: Jugador 1</div>
+        <div id="message"></div>
+        <div id="dice-container">
+            <div id="dice1">-</div>
+            <div id="dice2">-</div>
+        </div>
+        <div id="turn-counter">Turno: 1</div>
+        <div id="calculation-input">
+            <label>Resultado: </label>
+            <input type="number" id="result-input">
+            <button id="submit-result">Validar</button>
+        </div>
+        <button id="place-board">Colocar tablero</button>
+        <button id="roll-dice" disabled>Tirar dados</button>
+        <button id="confirm-move" disabled>Confirmar movimiento</button>
+        <div id="objection-buttons">
+            <button id="objection-player1">Objeción (Jugador 1)</button>
+            <button id="objection-player2">Objeción (Jugador 2)</button>
+        </div>
+        <button id="continue-button">Continuar sin objetar</button>
+    </div>
+    
+    <div id="camera-controls-message">
+        Controles de cámara: Mantén pulsado el botón del ratón en el fondo y arrastra para mover la vista. Usa la rueda del ratón para acercar/alejar.
+    </div>
+
+    <script>
+        // Configuración del juego
+        const TILE_SIZE = 1;
+        const TILE_SPACING = 0.1;
+        const NUM_TILES = 25; // Total de casillas en el camino
+        const PATH_COMPLEXITY = 0.7; // 0-1, afecta la aleatoriedad del camino (más alto = más giros)
+
+        // Variables del juego
+        let gamePhase = 'board-setup'; // 'board-setup', 'dice-roll', 'calculate', 'move-penguin'
+        let currentPlayer = 1;
+        let turnCounter = 1;
+        let diceHistory = [];
+        let currentDice = [
+            {value: 0, color: 'green'},
+            {value: 0, color: 'green'}
+        ]; // Modificado para incluir valores y colores
+        let boardTiles = [];
+        let pathSequence = []; // Array que almacena la secuencia de casillas en el camino
+        let penguins = [null, null]; // Índice 0 para jugador 1, índice 1 para jugador 2
+        let penguinPositions = [0, 0]; // Posiciones en el camino (índice)
+        let validTileIndices = []; // Casillas válidas para mover el pingüino
+        let previousTileIndex = 0; // Índice de la casilla anterior
+        let isDragging = false; // Indica si se está arrastrando el pingüino
+        let selectedPenguin = null; // Pingüino seleccionado
+
+        // Variables para control de movimiento
+        let hasMoved = false; // Indica si el pingüino ya ha sido movido en este turno
+        let placedOnValidTile = false; // Indica si el pingüino ha sido colocado en una casilla válida
+        let pendingConfirmation = false; // Indica si se ha colocado el pingüino pero aún no se ha confirmado
+        let canReposition = true; // Permite reposicionar el pingüino antes de confirmar
+
+        // Variables de física para el movimiento suave
+        let targetPosition = new THREE.Vector3(); // Posición objetivo para la animación suave
+        let velocity = new THREE.Vector3(); // Velocidad actual del pingüino
+        let isMovingToTarget = false; // Indica si el pingüino se está moviendo a una posición objetivo
+        const DRAG_FACTOR = 0.85; // Factor de arrastre (0-1, más cercano a 1 = menos arrastre)
+        const SPRING_STRENGTH = 0.2; // Fuerza del resorte para el efecto de imán
+        const VELOCITY_THRESHOLD = 0.01; // Umbral para considerar que el pingüino se ha detenido
+
+        // Variables para control de cámara
+        let isDraggingCamera = false;
+        let previousMousePosition = {
+            x: 0,
+            y: 0
+        };
+        let cameraTarget = new THREE.Vector3(0, 0, 0);
+        let cameraRotation = {
+            x: 0,
+            y: 0
+        };
+        let cameraPan = {
+            x: 0,
+            y: 0
+        };
+        const PAN_SPEED = 0.01;
+        const ROTATION_SPEED = 0.005;
+        const ZOOM_SPEED = 0.1; // Velocidad de zoom
+        const MIN_ZOOM = 1; // Distancia mínima de zoom
+        const MAX_ZOOM = 10; // Distancia máxima de zoom
+        let currentZoomDistance = 3; // Distancia actual de zoom
+        let cameraAutoFollow = true; // Controla si la cámara sigue automáticamente al jugador
+
+        // Variables de Three.js
+        let scene, camera, renderer, raycaster, mouse;
+        let boardGroup = new THREE.Group();
+        let dragPlane = new THREE.Plane();
+        let animationFrameId; // ID del frame de animación para cancelarlo si es necesario
+
+        // Configuración de la cámara
+        const CAMERA_HEIGHT = 2.5; // Altura fija de la cámara
+        const CAMERA_DISTANCE = 3; // Distancia horizontal desde la casilla
+        const CAMERA_ANGLE = 45; // Ángulo de inclinación en grados
+        const CAMERA_SMOOTH = 0.075; // Factor de suavizado para el movimiento de la cámara (0-1)
+
+        // Inicialización
+        init();
+        animate();
+
+        function init() {
+            // Configurar escena
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x87CEEB); // Color de cielo
+
+            // Configurar cámara
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, CAMERA_HEIGHT, CAMERA_DISTANCE);
+            camera.lookAt(0, 0, 0);
+
+            // Configurar iluminación
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(5, 10, 7);
+            directionalLight.castShadow = true;
+            scene.add(directionalLight);
+
+            // Configurar raycaster para interacción con el mouse
+            raycaster = new THREE.Raycaster();
+            mouse = new THREE.Vector2();
+
+            // Configurar renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            document.body.appendChild(renderer.domElement);
+
+            // Añadir el grupo del tablero a la escena
+            scene.add(boardGroup);
+
+            // Escuchar eventos de ventana
+            window.addEventListener('resize', onWindowResize, false);
+
+            // Event listeners para los botones
+            document.getElementById('place-board').addEventListener('click', setupBoard);
+            document.getElementById('roll-dice').addEventListener('click', rollDice);
+            document.getElementById('confirm-move').addEventListener('click', confirmMove);
+            document.getElementById('submit-result').addEventListener('click', checkCalculation);
+            document.getElementById('objection-player1').addEventListener('click', () => objectToMove(1));
+            document.getElementById('objection-player2').addEventListener('click', () => objectToMove(2));
+            document.getElementById('continue-button').addEventListener('click', continueWithoutObjection);
+
+            // Event listeners para el mouse y la rueda
+            renderer.domElement.addEventListener('mousedown', onMouseDown, false);
+            renderer.domElement.addEventListener('mousemove', onMouseMove, false);
+            renderer.domElement.addEventListener('mouseup', onMouseUp, false);
+            renderer.domElement.addEventListener('wheel', onMouseWheel, false);
+            
+            // Mostrar mensaje de bienvenida
+            showMessage("¡Bienvenido! Haz clic en 'Colocar tablero' para comenzar el juego.");
+        }
+
+        function animate() {
+            animationFrameId = requestAnimationFrame(animate);
+            
+            // Actualizar la posición de la cámara para seguir a la casilla actual si está activado el seguimiento
+            if (cameraAutoFollow && !isDraggingCamera) {
+                updateCameraPosition();
+            }
+            
+            // Aplicar física y animaciones suaves
+            updatePhysics();
+            
+            renderer.render(scene, camera);
+        }
+
+        function updateCameraPosition() {
+            // Solo actualizar si hay casillas y estamos en una fase de juego activa
+            if (boardTiles.length > 0 && gamePhase !== 'board-setup') {
+                // Obtener la casilla del jugador actual
+                const currentPlayerIndex = currentPlayer - 1;
+                const currentTileIndex = penguinPositions[currentPlayerIndex];
+                
+                if (currentTileIndex >= 0 && currentTileIndex < boardTiles.length) {
+                    const currentTile = boardTiles[currentTileIndex];
+                    
+                    // Calcular la posición objetivo de la cámara
+                    const targetLookAt = currentTile.position.clone();
+                    cameraTarget = targetLookAt.clone();
+                    
+                    // Calcular la posición de la cámara utilizando ángulo y distancia
+                    const angleRad = CAMERA_ANGLE * (Math.PI / 180); // Convertir a radianes
+                    const offsetX = 0; // Sin desplazamiento lateral
+                    const offsetY = CAMERA_HEIGHT;
+                    const offsetZ = currentZoomDistance; // Usar la distancia de zoom actual
+                    
+                    const targetCameraPosition = new THREE.Vector3(
+                        targetLookAt.x + offsetX,
+                        targetLookAt.y + offsetY,
+                        targetLookAt.z + offsetZ
+                    );
+                    
+                    // Ajustar la posición de la cámara con interpolación suave
+                    camera.position.lerp(targetCameraPosition, CAMERA_SMOOTH);
+                    
+                    // Hacer que la cámara mire a la casilla
+                    camera.lookAt(targetLookAt);
+                }
+            }
+        }
+
+        function updatePhysics() {
+            // Actualizar posición del pingüino seleccionado si está en movimiento autónomo
+            if (isMovingToTarget && selectedPenguin) {
+                // Calcular dirección y distancia hacia el objetivo
+                const direction = new THREE.Vector3().subVectors(targetPosition, selectedPenguin.position);
+                const distance = direction.length();
+                
+                // Si estamos muy cerca del objetivo, consideramos que hemos llegado
+                if (distance < VELOCITY_THRESHOLD && velocity.length() < VELOCITY_THRESHOLD) {
+                    selectedPenguin.position.copy(targetPosition);
+                    isMovingToTarget = false;
+                    velocity.set(0, 0, 0);
+                    
+                    // Si el pingüino terminó de moverse a una casilla válida, marcarlo como movido
+                    if (gamePhase === 'move-penguin' && !hasMoved) {
+                        const nearestTileIndex = findNearestTileIndex(selectedPenguin.position);
+                        if (validTileIndices.includes(nearestTileIndex)) {
+                            hasMoved = true;
+                            placedOnValidTile = true;
+                            pendingConfirmation = true;
+                            showMessage("Pingüino colocado. Puedes moverlo de nuevo o hacer clic en 'Confirmar movimiento' para finalizar tu turno.");
+                            document.getElementById('confirm-move').disabled = false;
+                        }
+                    }
+                } else {
+                    // Aplicar fuerza de resorte (proporcional a la distancia)
+                    direction.normalize();
+                    const springForce = direction.multiplyScalar(distance * SPRING_STRENGTH);
+                    
+                    // Actualizar velocidad
+                    velocity.add(springForce);
+                    velocity.multiplyScalar(DRAG_FACTOR); // Aplicar factor de arrastre
+                    
+                    // Actualizar posición
+                    selectedPenguin.position.add(velocity);
+                }
+            }
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function setupBoard() {
+            console.log("Configurando tablero...");
+            // Limpiar cualquier tablero existente
+            while (boardGroup.children.length > 0) {
+                boardGroup.remove(boardGroup.children[0]);
+            }
+
+            boardTiles = [];
+            pathSequence = [];
+            
+            // Generar un camino aleatorio
+            generateRandomPath();
+
+            // Crear pingüinos
+            createPenguins();
+
+            // Crear pequeñas decoraciones en el escenario
+            createDecorations();
+
+            // Actualizar la fase del juego
+            gamePhase = 'dice-roll';
+            updateUI();
+            
+            // Inicializar la cámara en la posición de la primera casilla
+            if (boardTiles.length > 0) {
+                const startTile = boardTiles[0];
+                camera.position.set(startTile.position.x, CAMERA_HEIGHT, startTile.position.z + currentZoomDistance);
+                camera.lookAt(startTile.position);
+                cameraTarget = startTile.position.clone();
+            }
+            
+            showMessage("¡Tablero creado! Comienza el Jugador 1 tirando los dados.");
+            document.getElementById('roll-dice').disabled = false;
+            document.getElementById('place-board').disabled = true;
+        }
+
+        function generateRandomPath() {
+            console.log("Generando camino aleatorio...");
+            // Configuración para el generador de caminos
+            const gridSize = 10; // Tamaño de la cuadrícula virtual para planificar el camino
+            const grid = new Array(gridSize).fill().map(() => new Array(gridSize).fill(false));
+            
+            // Posición inicial en el centro
+            let x = Math.floor(gridSize / 2);
+            let z = Math.floor(gridSize / 2);
+            
+            // Marcar la casilla inicial como ocupada
+            grid[z][x] = true;
+            
+            // Crear la primera casilla (inicio)
+            createTile(x - Math.floor(gridSize / 2), 0, z - Math.floor(gridSize / 2), 0, true);
+            
+            // Dirección inicial aleatoria
+            let directions = [[0, 1], [1, 0], [0, -1], [-1, 0]]; // [dx, dz]: arriba, derecha, abajo, izquierda
+            let currentDirection = Math.floor(Math.random() * 4);
+            
+            // Generar el resto del camino
+            for (let i = 1; i < NUM_TILES; i++) {
+                // Probabilidad de cambiar de dirección
+                if (Math.random() < PATH_COMPLEXITY) {
+                    // Elegir una nueva dirección aleatoria (excepto la opuesta a la actual)
+                    const oppositeDirection = (currentDirection + 2) % 4;
+                    let possibleDirections = [0, 1, 2, 3].filter(dir => dir !== oppositeDirection);
+                    currentDirection = possibleDirections[Math.floor(Math.random() * possibleDirections.length)];
+                }
+                
+                // Obtener la nueva dirección
+                const [dx, dz] = directions[currentDirection];
+                
+                // Calcular nueva posición
+                let newX = x + dx;
+                let newZ = z + dz;
+                
+                // Si la nueva posición está fuera del grid o ya ocupada, intentar otra dirección
+                if (newX < 0 || newX >= gridSize || newZ < 0 || newZ >= gridSize || grid[newZ][newX]) {
+                    // Probar todas las direcciones posibles
+                    let foundDirection = false;
+                    for (let dir = 0; dir < 4; dir++) {
+                        if (dir === (currentDirection + 2) % 4) continue; // Evitar retroceder
+                        
+                        const [newDx, newDz] = directions[dir];
+                        newX = x + newDx;
+                        newZ = z + newDz;
+                        
+                        if (newX >= 0 && newX < gridSize && newZ >= 0 && newZ < gridSize && !grid[newZ][newX]) {
+                            currentDirection = dir;
+                            foundDirection = true;
+                            break;
+                        }
+                    }
+                    
+                    // Si no encontramos dirección, intentar incluso retroceder
+                    if (!foundDirection) {
+                        currentDirection = (currentDirection + 2) % 4;
+                        const [newDx, newDz] = directions[currentDirection];
+                        newX = x + newDx;
+                        newZ = z + newDz;
+                    }
+                }
+                
+                // Marcar la nueva casilla como ocupada
+                grid[newZ][newX] = true;
+                x = newX;
+                z = newZ;
+                
+                // Crear la casilla en el mundo 3D
+                const isEnd = (i === NUM_TILES - 1);
+                createTile(x - Math.floor(gridSize / 2), 0, z - Math.floor(gridSize / 2), i, isEnd);
+            }
+            
+            console.log(`Camino generado con ${boardTiles.length} casillas`);
+        }
+
+        function createTile(x, y, z, index, isSpecial = false) {
+            const geometry = new THREE.BoxGeometry(TILE_SIZE, 0.1, TILE_SIZE);
+            
+            // Color basado en si es especial (inicio/fin) o normal
+            let color;
+            if (isSpecial) {
+                color = index === 0 ? 0x00FF00 : 0xFF0000; // Verde para inicio, rojo para fin
+            } else {
+                color = index % 2 === 0 ? 0xADD8E6 : 0x87CEEB; // Alternar azul claro
+            }
+            
+            const material = new THREE.MeshStandardMaterial({ color: color });
+            
+            const tile = new THREE.Mesh(geometry, material);
+            tile.position.x = x * (TILE_SIZE + TILE_SPACING);
+            tile.position.y = y;
+            tile.position.z = z * (TILE_SIZE + TILE_SPACING);
+            tile.receiveShadow = true;
+            
+            // Guardar el índice de la casilla en su orden en el camino
+            tile.userData.index = index;
+            tile.userData.pathIndex = boardTiles.length;
+            
+            boardGroup.add(tile);
+            boardTiles.push(tile);
+            pathSequence.push(index);
+            
+            // Añadir conectores entre casillas (excepto para la primera)
+            if (index > 0) {
+                createConnector(boardTiles[index - 1], tile);
+            }
+            
+            return tile;
+        }
+
+        function createConnector(tileA, tileB) {
+            // Crear un conector entre dos casillas
+            const start = tileA.position.clone();
+            const end = tileB.position.clone();
+            
+            // Calcular el punto medio
+            const midPoint = new THREE.Vector3().addVectors(start, end).multiplyScalar(0.5);
+            
+            // Calcular la dirección y distancia
+            const direction = new THREE.Vector3().subVectors(end, start);
+            const distance = direction.length();
+            
+            // Crear geometría del conector
+            const connectorGeometry = new THREE.BoxGeometry(0.2, 0.05, distance);
+            const connectorMaterial = new THREE.MeshStandardMaterial({ color: 0xBBBBBB });
+            const connector = new THREE.Mesh(connectorGeometry, connectorMaterial);
+            
+            // Posicionar el conector
+            connector.position.copy(midPoint);
+            
+            // Orientar el conector
+            connector.lookAt(end);
+            
+            // Rotar para alinearlo correctamente (dependiendo de la dirección)
+            connector.rotateX(Math.PI / 2);
+            
+            boardGroup.add(connector);
+        }
+
+        function createDecorations() {
+            // Añadir algunas decoraciones al escenario (opcional)
+            // Por ejemplo, pequeños bloques de "hielo" aleatorios
+            const numDecorations = 30;
+            
+            for (let i = 0; i < numDecorations; i++) {
+                const size = 0.2 + Math.random() * 0.3;
+                const geometry = new THREE.BoxGeometry(size, size, size);
+                const material = new THREE.MeshStandardMaterial({ 
+                    color: 0xEEEEFF,
+                    transparent: true,
+                    opacity: 0.7
+                });
+                
+                const decoration = new THREE.Mesh(geometry, material);
+                
+                // Posición aleatoria en un área amplia
+                const radius = 15;
+                const angle = Math.random() * Math.PI * 2;
+                decoration.position.x = Math.cos(angle) * radius * Math.random();
+                decoration.position.y = -0.1 + Math.random() * 0.1;
+                decoration.position.z = Math.sin(angle) * radius * Math.random();
+                
+                // Rotación aleatoria
+                decoration.rotation.x = Math.random() * Math.PI;
+                decoration.rotation.y = Math.random() * Math.PI;
+                decoration.rotation.z = Math.random() * Math.PI;
+                
+                boardGroup.add(decoration);
+            }
+        }
+
+        function createPenguins() {
+            // Obtener la posición de la casilla inicial
+            const startTile = boardTiles[0];
+            
+            // Crear pingüino del jugador 1 (azul)
+            const penguin1 = createPenguin(0x1E90FF);
+            penguin1.position.copy(startTile.position.clone().add(new THREE.Vector3(0, 0.5, 0)));
+            penguin1.userData.playerIndex = 0;
+            boardGroup.add(penguin1);
+            penguins[0] = penguin1;
+
+            // Crear pingüino del jugador 2 (rojo)
+            const penguin2 = createPenguin(0xFF4500);
+            penguin2.position.copy(startTile.position.clone().add(new THREE.Vector3(0, 0.5, 0)));
+            penguin2.userData.playerIndex = 1;
+            boardGroup.add(penguin2);
+            penguins[1] = penguin2;
+
+            // Posicionar los pingüinos ligeramente separados
+            penguins[0].position.x += 0.25;
+            penguins[1].position.x -= 0.25;
+            
+            // Inicializar posiciones de inicio para efectos de física
+            penguins[0].userData.initialY = penguins[0].position.y;
+            penguins[1].userData.initialY = penguins[1].position.y;
+        }
+
+        function createPenguin(color) {
+            const group = new THREE.Group();
+            
+            // Cuerpo (usando SphereGeometry en lugar de CapsuleGeometry)
+            const bodyGeometry = new THREE.SphereGeometry(0.15, 16, 16);
+            const bodyMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
+            const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+            body.position.y = 0.15;
+            body.scale.y = 1.5; // Estirar verticalmente para simular una cápsula
+            body.castShadow = true;
+            group.add(body);
+            
+            // Barriga blanca (usando SphereGeometry en lugar de CapsuleGeometry)
+            const bellyGeometry = new THREE.SphereGeometry(0.1, 16, 16);
+            const bellyMaterial = new THREE.MeshStandardMaterial({ color: 0xFFFFFF });
+            const belly = new THREE.Mesh(bellyGeometry, bellyMaterial);
+            belly.position.y = 0.15;
+            belly.position.z = 0.06;
+            belly.scale.y = 1.5; // Estirar verticalmente para simular una cápsula
+            group.add(belly);
+            
+            // Cara
+            const faceGeometry = new THREE.SphereGeometry(0.12, 16, 16);
+            const faceMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
+            const face = new THREE.Mesh(faceGeometry, faceMaterial);
+            face.position.y = 0.35;
+            face.castShadow = true;
+            group.add(face);
+            
+            // Pico
+            const beakGeometry = new THREE.ConeGeometry(0.04, 0.08, 8);
+            const beakMaterial = new THREE.MeshStandardMaterial({ color: 0xFFA500 });
+            const beak = new THREE.Mesh(beakGeometry, beakMaterial);
+            beak.position.y = 0.35;
+            beak.position.z = 0.12;
+            beak.rotation.x = Math.PI / 2;
+            group.add(beak);
+            
+            // Ojos
+            const eyeGeometry = new THREE.SphereGeometry(0.02, 8, 8);
+            const eyeMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFFF });
+            
+            const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            leftEye.position.y = 0.38;
+            leftEye.position.z = 0.09;
+            leftEye.position.x = 0.05;
+            group.add(leftEye);
+            
+            const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            rightEye.position.y = 0.38;
+            rightEye.position.z = 0.09;
+            rightEye.position.x = -0.05;
+            group.add(rightEye);
+            
+            // Aletas
+            const flipperGeometry = new THREE.BoxGeometry(0.05, 0.15, 0.08);
+            const flipperMaterial = new THREE.MeshStandardMaterial({ color: color });
+            
+            const leftFlipper = new THREE.Mesh(flipperGeometry, flipperMaterial);
+            leftFlipper.position.y = 0.15;
+            leftFlipper.position.x = 0.15;
+            leftFlipper.rotation.z = -0.3;
+            group.add(leftFlipper);
+            
+            const rightFlipper = new THREE.Mesh(flipperGeometry, flipperMaterial);
+            rightFlipper.position.y = 0.15;
+            rightFlipper.position.x = -0.15;
+            rightFlipper.rotation.z = 0.3;
+            group.add(rightFlipper);
+            
+            // Pies
+            const footGeometry = new THREE.BoxGeometry(0.08, 0.03, 0.12);
+            const footMaterial = new THREE.MeshStandardMaterial({ color: 0xFFA500 });
+            
+            const leftFoot = new THREE.Mesh(footGeometry, footMaterial);
+            leftFoot.position.y = -0.15;
+            leftFoot.position.x = 0.06;
+            leftFoot.position.z = 0.04;
+            group.add(leftFoot);
+            
+            const rightFoot = new THREE.Mesh(footGeometry, footMaterial);
+            rightFoot.position.y = -0.15;
+            rightFoot.position.x = -0.06;
+            rightFoot.position.z = 0.04;
+            group.add(rightFoot);
+            
+            return group;
+        }
+
+        function rollDice() {
+            // Si es el turno 5, 10, 15, etc. usar los dados del turno inverso
+            if (turnCounter % 5 === 0 && diceHistory.length >= 5) {
+                const historyIndex = 5 - (turnCounter % 5) - 1;
+                // Invertir el orden de los dados
+                currentDice = [
+                    {value: diceHistory[historyIndex][1].value, color: diceHistory[historyIndex][1].color},
+                    {value: diceHistory[historyIndex][0].value, color: diceHistory[historyIndex][0].color}
+                ];
+                showMessage(`Turno ${turnCounter}: Usando dados del turno ${turnCounter-4} en orden inverso: 
+                    ${currentDice[0].value} (${currentDice[0].color}) y ${currentDice[1].value} (${currentDice[1].color})`);
+            } else {
+                // Tirada normal - generar valor y color para cada dado
+                // CAMBIO 1: Dados del 1 al 12 en lugar del 1 al 6
+                currentDice = [
+                    {
+                        value: Math.floor(Math.random() * 12) + 1, 
+                        color: Math.random() < 0.5 ? 'red' : 'green'
+                    },
+                    {
+                        value: Math.floor(Math.random() * 12) + 1,
+                        color: Math.random() < 0.5 ? 'red' : 'green'
+                    }
+                ];
+                
+                // Guardar en historial
+                diceHistory.push([...currentDice]);
+                // Limitar el historial a los últimos 5 turnos
+                if (diceHistory.length > 5) {
+                    diceHistory.shift();
+                }
+            }
+
+            // Mostrar los dados con sus valores y colores
+            const dice1Element = document.getElementById('dice1');
+            const dice2Element = document.getElementById('dice2');
+            
+            dice1Element.textContent = currentDice[0].value;
+            dice2Element.textContent = currentDice[1].value;
+            
+            // Aplicar clases CSS según el color
+            dice1Element.className = currentDice[0].color === 'green' ? 'dice-green' : 'dice-red';
+            dice2Element.className = currentDice[1].color === 'green' ? 'dice-green' : 'dice-red';
+
+            // Actualizar la fase del juego
+            gamePhase = 'calculate';
+            updateUI();
+            
+            // Reiniciar las variables de control de movimiento
+            hasMoved = false;
+            placedOnValidTile = false;
+            pendingConfirmation = false;
+            
+            // Mostrar campo para el cálculo
+            document.getElementById('calculation-input').style.display = 'block';
+            document.getElementById('roll-dice').disabled = true;
+            showMessage(`Calcula el resultado: 
+                ${currentDice[0].value} (${currentDice[0].color}) y ${currentDice[1].value} (${currentDice[1].color}). 
+                Si los dados son del mismo color, suma. Si son diferentes, resta.`);
+        }
+
+        function checkCalculation() {
+            const userResult = parseInt(document.getElementById('result-input').value);
+            let correctResult = getCorrectResult();
+            
+            if (userResult === correctResult) {
+                showMessage("¡Correcto! Ahora puedes mover tu pingüino con el mouse (se moverá con física).");
+                document.getElementById('confirm-move').disabled = false;
+                document.getElementById('calculation-input').style.display = 'none';
+                
+                // CAMBIO 3: Si la suma/resta da 12 o más, avanzar 2 casillas, sino 1
+                const spacesToMove = correctResult >= 12 ? 2 : 1;
+                
+                // Guardar la posición anterior antes de actualizar
+                const playerIndex = currentPlayer - 1;
+                previousTileIndex = penguinPositions[playerIndex];
+                
+                // CAMBIO 2: Permitir que el pingüino se mueva a cualquier casilla
+                calculateValidTiles(previousTileIndex, spacesToMove);
+                
+                // Cambiar fase a movimiento
+                gamePhase = 'move-penguin';
+                updateUI();
+            } else {
+                showMessage("Incorrecto. Prueba a calcular nuevamente. Recuerda: mismo color suma, distinto color resta.");
+            }
+        }
+
+        function calculateValidTiles(currentPathIndex, spacesToMove) {
+            // CAMBIO 2: Permitir que el pingüino se mueva a cualquier casilla
+            validTileIndices = [];
+            
+            // Incluir todas las casillas como válidas
+            for (let i = 0; i < boardTiles.length; i++) {
+                validTileIndices.push(i);
+            }
+            
+            // Destacar las casillas válidas (todas)
+            highlightValidTiles();
+        }
+
+        function highlightValidTiles() {
+            // Restaurar color original de todas las casillas
+            for (let i = 0; i < boardTiles.length; i++) {
+                // Restaurar según si es casilla de inicio, fin o normal
+                if (i === 0) {
+                    boardTiles[i].material.color.set(0x00FF00); // Verde para inicio
+                } else if (i === boardTiles.length - 1) {
+                    boardTiles[i].material.color.set(0xFF0000); // Rojo para fin
+                } else {
+                    boardTiles[i].material.color.set(i % 2 === 0 ? 0xADD8E6 : 0x87CEEB); // Alternar azul claro
+                }
+            }
+            
+            // Resaltar casillas válidas (todas)
+            for (let i = 0; i < validTileIndices.length; i++) {
+                // Solo hacemos un ligero resaltado para que se pueda distinguir
+                const tile = boardTiles[validTileIndices[i]];
+                if (i !== 0 && i !== boardTiles.length - 1) {
+                    // Un resaltado sutil para todas las casillas excepto inicio y fin
+                    const currentColor = tile.material.color.clone();
+                    tile.material.color.set(currentColor.lerp(new THREE.Color(0x90EE90), 0.3));
+                }
+            }
+        }
+
+        function confirmMove() {
+            if (placedOnValidTile) {
+                const playerIndex = currentPlayer - 1;
+                
+                // Verificar el índice de la casilla actual
+                const nearestTileIndex = findNearestTileIndex(penguins[playerIndex].position);
+                // Actualizar la posición del jugador
+                penguinPositions[playerIndex] = nearestTileIndex;
+                
+                // Actualizar UI
+                document.getElementById(`player${currentPlayer}-position`).textContent = `Casilla ${nearestTileIndex + 1}`;
+                
+                // Ya no se puede reposicionar después de confirmar
+                canReposition = false;
+                
+                // Mostrar solo el botón del jugador que no está en turno
+                document.getElementById('objection-buttons').style.display = 'none';
+                document.getElementById('continue-button').style.display = 'block';
+                
+                const otherPlayer = currentPlayer === 1 ? 2 : 1;
+                document.getElementById(`objection-player${otherPlayer}`).style.display = 'block';
+                document.getElementById(`objection-player${currentPlayer}`).style.display = 'none';
+                document.getElementById('objection-buttons').style.display = 'block';
+                
+                // Guardar información para validar objeciones
+                window.lastMoveInfo = {
+                    player: currentPlayer,
+                    diceResult: getCorrectResult(),
+                    spacesMoved: nearestTileIndex - previousTileIndex,
+                    previousPosition: previousTileIndex,
+                    newPosition: nearestTileIndex
+                };
+                
+                showMessage(`Jugador ${currentPlayer} se movió ${nearestTileIndex - previousTileIndex} espacios. ¿Objetar o continuar?`);
+                document.getElementById('confirm-move').disabled = true;
+                
+                // Restaurar colores originales de las casillas
+                restoreOriginalTileColors();
+                
+                // Limpiar el estado de movimiento
+                pendingConfirmation = false;
+            } else if (selectedPenguin) {
+                showMessage("¡Debes colocar tu pingüino en una casilla válida primero!");
+            } else {
+                showMessage("¡Debes mover tu pingüino primero!");
+            }
+        }
+
+        function continueWithoutObjection() {
+            // Ocultar botones de objeción y avanzar al siguiente turno
+            document.getElementById('objection-buttons').style.display = 'none';
+            document.getElementById('continue-button').style.display = 'none';
+            nextTurn();
+        }
+
+        function restoreOriginalTileColors() {
+            for (let i = 0; i < boardTiles.length; i++) {
+                if (i === 0) {
+                    boardTiles[i].material.color.set(0x00FF00); // Verde para inicio
+                } else if (i === boardTiles.length - 1) {
+                    boardTiles[i].material.color.set(0xFF0000); // Rojo para fin
+                } else {
+                    boardTiles[i].material.color.set(i % 2 === 0 ? 0xADD8E6 : 0x87CEEB); // Alternar azul claro
+                }
+            }
+        }
+
+        function getCorrectResult() {
+            // Nueva lógica según colores:
+            // Si ambos dados son del mismo color (ambos verdes o ambos rojos), se suman
+            // Si los dados son de colores diferentes, se restan
+            if (currentDice[0].color === currentDice[1].color) {
+                // Mismo color: sumar
+                return currentDice[0].value + currentDice[1].value;
+            } else {
+                // Diferentes colores: restar (valor absoluto para siempre tener un resultado positivo)
+                return Math.abs(currentDice[0].value - currentDice[1].value);
+            }
+        }
+
+        function findNearestTileIndex(position) {
+            let nearestTile = 0;
+            let minDistance = Infinity;
+            
+            for (let i = 0; i < boardTiles.length; i++) {
+                const tile = boardTiles[i];
+                // Solo consideramos distancia horizontal (x, z)
+                const tilePos = new THREE.Vector3(tile.position.x, 0, tile.position.z);
+                const objPos = new THREE.Vector3(position.x, 0, position.z);
+                const distance = tilePos.distanceTo(objPos);
+                
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    nearestTile = i;
+                }
+            }
+            
+            return nearestTile;
+        }
+
+        function snapPenguinToTile(penguin, tileIndex) {
+            if (tileIndex < 0 || tileIndex >= boardTiles.length) return;
+            
+            // Crear posición objetivo
+            const newTilePosition = boardTiles[tileIndex].position.clone();
+            newTilePosition.y = penguin.userData.initialY || 0.5; // Usar altura inicial guardada o valor por defecto
+            
+            // Añadir ligera separación entre pingüinos si están en la misma casilla
+            const otherPlayerIndex = (penguin.userData.playerIndex === 0) ? 1 : 0;
+            if (penguinPositions[otherPlayerIndex] === tileIndex) {
+                if (penguin.userData.playerIndex === 0) {
+                    newTilePosition.x += 0.25;
+                } else {
+                    newTilePosition.x -= 0.25;
+                }
+            }
+            
+            // Configurar para movimiento suave
+            targetPosition.copy(newTilePosition);
+            isMovingToTarget = true;
+            selectedPenguin = penguin; // Asegurar que el pingüino seleccionado es el correcto
+            
+            // Aplicar un pequeño impulso vertical para efecto de "salto"
+            velocity.y = 0.05;
+            
+            // Esperar a que el pingüino termine de moverse antes de continuar (ayuda con las objeciones)
+            return waitForPenguinToReachTarget(penguin, newTilePosition);
+        }
+        
+        // Función para esperar a que el pingüino termine de moverse
+        function waitForPenguinToReachTarget(penguin, targetPos) {
+            return new Promise(resolve => {
+                const checkPosition = setInterval(() => {
+                    const distance = penguin.position.distanceTo(targetPos);
+                    if (distance < 0.05) {
+                        clearInterval(checkPosition);
+                        resolve();
+                    }
+                }, 100);
+            });
+        }
+
+        async function objectToMove(objectingPlayer) {
+            // Solo permitir objeciones del jugador que no acaba de moverse
+            if (objectingPlayer === currentPlayer) {
+                showMessage("No puedes objetar tu propio movimiento.");
+                return;
+            }
+            
+            // Ocultar botones para evitar múltiples objeciones
+            document.getElementById('objection-buttons').style.display = 'none';
+            document.getElementById('continue-button').style.display = 'none';
+            
+            const lastMove = window.lastMoveInfo;
+            // CAMBIO 3: Cambiar criterio de movimiento correcto
+            const correctResult = lastMove.diceResult;
+            const correctSpaces = correctResult >= 12 ? 2 : 1;
+            const actualSpacesMoved = lastMove.newPosition - lastMove.previousPosition;
+            
+            // Verificar si la objeción es válida
+            if (actualSpacesMoved !== correctSpaces) {
+                // Objeción válida
+                showMessage(`¡Objeción correcta! El Jugador ${lastMove.player} debería haberse movido ${correctSpaces} espacios.`);
+                
+                // El objetor avanza 1 espacio
+                const objectorIndex = objectingPlayer - 1;
+                let objectorNewPosition = Math.min(penguinPositions[objectorIndex] + 1, boardTiles.length - 1);
+                penguinPositions[objectorIndex] = objectorNewPosition;
+                await snapPenguinToTile(penguins[objectorIndex], objectorNewPosition);
+                
+                // El jugador objetado regresa a su posición anterior
+                const objectedIndex = lastMove.player - 1;
+                penguinPositions[objectedIndex] = lastMove.previousPosition;
+                await snapPenguinToTile(penguins[objectedIndex], lastMove.previousPosition);
+                
+                // Actualizar UI
+                document.getElementById(`player${objectingPlayer}-position`).textContent = `Casilla ${objectorNewPosition + 1}`;
+                document.getElementById(`player${lastMove.player}-position`).textContent = `Casilla ${lastMove.previousPosition + 1}`;
+            } else {
+                // Objeción inválida
+                showMessage(`¡Objeción incorrecta! El Jugador ${lastMove.player} se movió correctamente.`);
+                
+                // El objetor retrocede 1 espacio
+                const objectorIndex = objectingPlayer - 1;
+                let objectorNewPosition = Math.max(penguinPositions[objectorIndex] - 1, 0);
+                penguinPositions[objectorIndex] = objectorNewPosition;
+                await snapPenguinToTile(penguins[objectorIndex], objectorNewPosition);
+                
+                // El jugador correcto avanza 1 espacio más
+                const correctIndex = lastMove.player - 1;
+                let correctNewPosition = Math.min(penguinPositions[correctIndex] + 1, boardTiles.length - 1);
+                penguinPositions[correctIndex] = correctNewPosition;
+                await snapPenguinToTile(penguins[correctIndex], correctNewPosition);
+                
+                // Actualizar UI
+                document.getElementById(`player${objectingPlayer}-position`).textContent = `Casilla ${objectorNewPosition + 1}`;
+                document.getElementById(`player${lastMove.player}-position`).textContent = `Casilla ${correctNewPosition + 1}`;
+            }
+            
+            nextTurn();
+        }
+
+        function nextTurn() {
+            // Cambiar al siguiente jugador
+            currentPlayer = currentPlayer === 1 ? 2 : 1;
+            
+            // Incrementar contador de turnos
+            turnCounter++;
+            
+            // Actualizar la fase del juego
+            gamePhase = 'dice-roll';
+            updateUI();
+            
+            // Reiniciar las variables de control de movimiento
+            hasMoved = false;
+            placedOnValidTile = false;
+            pendingConfirmation = false;
+            canReposition = true; // Reiniciar la capacidad de reposicionamiento para el siguiente turno
+            
+            // Habilitar el botón de tirar dados
+            document.getElementById('roll-dice').disabled = false;
+            
+            // Verificar victoria
+            checkVictory();
+        }
+
+        function checkVictory() {
+            // Comprobar si algún jugador ha llegado al final del tablero
+            const lastTile = boardTiles.length - 1;
+            
+            if (penguinPositions[0] >= lastTile) {
+                showMessage("¡El Jugador 1 ha ganado la partida!");
+                disableGameControls();
+            } else if (penguinPositions[1] >= lastTile) {
+                showMessage("¡El Jugador 2 ha ganado la partida!");
+                disableGameControls();
+            }
+        }
+
+        function disableGameControls() {
+            document.getElementById('roll-dice').disabled = true;
+            document.getElementById('confirm-move').disabled = true;
+            document.getElementById('objection-buttons').style.display = 'none';
+            document.getElementById('continue-button').style.display = 'none';
+            document.getElementById('calculation-input').style.display = 'none';
+        }
+
+        function updateUI() {
+            // Actualizar la fase actual del juego
+            let phaseText = "";
+            switch (gamePhase) {
+                case 'board-setup':
+                    phaseText = "Fase de colocación del tablero";
+                    break;
+                case 'dice-roll':
+                    phaseText = "Fase de tirar dados";
+                    break;
+                case 'calculate':
+                    phaseText = "Fase de cálculo";
+                    break;
+                case 'move-penguin':
+                    phaseText = "Fase de movimiento";
+                    break;
+            }
+            document.getElementById('game-phase').textContent = phaseText;
+            
+            // Actualizar información del turno
+            document.getElementById('turn-info').textContent = `Turno actual: Jugador ${currentPlayer}`;
+            document.getElementById('turn-counter').textContent = `Turno: ${turnCounter}`;
+        }
+
+        function showMessage(msg) {
+            document.getElementById('message').textContent = msg;
+            console.log("Mensaje:", msg);
+        }
+
+        function onMouseDown(event) {
+            // Convertir coordenadas de mouse a coordenadas normalizadas (-1 a +1)
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            
+            // Actualizar el raycaster con la posición del mouse
+            raycaster.setFromCamera(mouse, camera);
+            
+            // Comprobar intersección con los pingüinos
+            const intersects = raycaster.intersectObjects(penguins, true);
+            
+            // Modificado: Permitir reposicionamiento del pingüino mientras no se confirme el movimiento
+            if (intersects.length > 0 && gamePhase === 'move-penguin' && (!hasMoved || canReposition)) {
+                // Lógica para mover pingüinos
+                // Encontrar el pingüino al que pertenece el objeto intersectado
+                let penguin = intersects[0].object;
+                while (penguin.parent !== boardGroup) {
+                    penguin = penguin.parent;
+                }
+                
+                // Verificar si es el pingüino del jugador actual
+                if (penguin.userData.playerIndex === currentPlayer - 1) {
+                    isDragging = true;
+                    selectedPenguin = penguin;
+                    cameraAutoFollow = false; // Desactivar seguimiento automático cuando se arrastra
+                    
+                    // Si ya habíamos movido el pingüino, permitir reposicionarlo
+                    if (hasMoved) {
+                        // Resetear el estado para permitir un nuevo movimiento
+                        hasMoved = false;
+                        placedOnValidTile = false;
+                        pendingConfirmation = false;
+                    }
+                    
+                    // Detener cualquier movimiento autónomo activo
+                    isMovingToTarget = false;
+                    velocity.set(0, 0, 0);
+                    
+                    // Crear un plano paralelo al suelo a la altura del pingüino
+                    dragPlane.setFromNormalAndCoplanarPoint(
+                        new THREE.Vector3(0, 1, 0),
+                        new THREE.Vector3(0, selectedPenguin.position.y, 0)
+                    );
+                    
+                    // Aplicar un pequeño "salto" inicial al agarrar el pingüino
+                    selectedPenguin.position.y += 0.2;
+                }
+            } else {
+                // Control de cámara con arrastre
+                // Si no estamos arrastrando un pingüino, activar desplazamiento de cámara
+                isDraggingCamera = true;
+                previousMousePosition = {
+                    x: event.clientX,
+                    y: event.clientY
+                };
+                cameraAutoFollow = false; // Desactivar seguimiento automático
+            }
+        }
+
+        function onMouseMove(event) {
+            // Mover pingüino si estamos arrastrando
+            if (isDragging && selectedPenguin) {
+                // Actualizar posición del mouse
+                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+                
+                // Lanzar rayo desde la cámara
+                raycaster.setFromCamera(mouse, camera);
+                
+                // Calcular punto de intersección con el plano
+                const intersects = raycaster.ray.intersectPlane(dragPlane, new THREE.Vector3());
+                
+                if (intersects) {
+                    // Calcular nueva velocidad basada en el movimiento del mouse
+                    const oldPosition = selectedPenguin.position.clone();
+                    
+                    // Mover el pingüino al punto de intersección
+                    selectedPenguin.position.x = intersects.x;
+                    selectedPenguin.position.z = intersects.z;
+                    
+                    // Simular oscilación mientras se arrastra
+                    const time = Date.now() * 0.001;
+                    const bounce = Math.sin(time * 10) * 0.05;
+                    selectedPenguin.position.y = selectedPenguin.userData.initialY + 0.2 + bounce;
+                    
+                    // Calcular velocidad basada en el movimiento
+                    velocity.x = (selectedPenguin.position.x - oldPosition.x) * 0.5;
+                    velocity.z = (selectedPenguin.position.z - oldPosition.z) * 0.5;
+                    
+                    // Opcional: Efecto de "imantado" mientras se arrastra
+                    const nearestTileIndex = findNearestTileIndex(selectedPenguin.position);
+                    
+                    // Resaltar la casilla más cercana si es válida
+                    highlightNearestValidTile(nearestTileIndex);
+                    
+                    // Efecto de "imantado suave" hacia la casilla válida más cercana
+                    if (validTileIndices.includes(nearestTileIndex)) {
+                        const tilePos = boardTiles[nearestTileIndex].position;
+                        // Aplicar una pequeña atracción hacia la casilla válida
+                        selectedPenguin.position.x += (tilePos.x - selectedPenguin.position.x) * 0.05;
+                        selectedPenguin.position.z += (tilePos.z - selectedPenguin.position.z) * 0.05;
+                    }
+                }
+            }
+            // Mover la cámara si estamos arrastrando el fondo
+            else if (isDraggingCamera) {
+                // Calcular diferencia de movimiento
+                const deltaX = event.clientX - previousMousePosition.x;
+                const deltaY = event.clientY - previousMousePosition.y;
+                
+                previousMousePosition = {
+                    x: event.clientX,
+                    y: event.clientY
+                };
+                
+                // Mover la cámara (desplazamiento lateral y vertical)
+                // Utilizamos transformaciones en el espacio local de la cámara
+                const speed = 0.01;
+                const right = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
+                const up = new THREE.Vector3(0, 1, 0);
+                const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
+                
+                // Mover la cámara lateralmente y verticalmente
+                camera.position.addScaledVector(right, -deltaX * speed);
+                camera.position.addScaledVector(up, deltaY * speed);
+                
+                // Actualizar el target para que la cámara siga mirando en la misma dirección
+                cameraTarget.addScaledVector(right, -deltaX * speed);
+                cameraTarget.addScaledVector(up, deltaY * speed);
+                
+                camera.lookAt(cameraTarget);
+            }
+        }
+
+        function onMouseUp(event) {
+            if (isDragging && selectedPenguin) {
+                // Encontrar la casilla más cercana
+                const nearestTileIndex = findNearestTileIndex(selectedPenguin.position);
+                
+                // Verificar si es una casilla válida
+                if (validTileIndices.includes(nearestTileIndex)) {
+                    // "Imantar" a la casilla con física
+                    snapPenguinToTile(selectedPenguin, nearestTileIndex);
+                    
+                    // Marcar que ya se ha movido el pingüino
+                    hasMoved = true;
+                    placedOnValidTile = true;
+                    pendingConfirmation = true;
+                    
+                    // Mostrar mensaje que indique que se puede seguir moviendo el pingüino
+                    showMessage("Pingüino colocado. Puedes moverlo de nuevo o hacer clic en 'Confirmar movimiento' para finalizar tu turno.");
+                    
+                    // Aplicar un poco de velocidad residual
+                    velocity.x *= 0.5;
+                    velocity.z *= 0.5;
+                } else {
+                    // Si no es válida, devolver a la posición original con física
+                    snapPenguinToTile(selectedPenguin, previousTileIndex);
+                    showMessage("¡Movimiento no válido! Debes mover a una casilla resaltada en verde.");
+                }
+                
+                isDragging = false;
+            }
+            
+            // Finalizar arrastre de cámara
+            isDraggingCamera = false;
+        }
+        
+        // Nueva función para el control de zoom con la rueda del ratón
+        function onMouseWheel(event) {
+            // Prevenir el comportamiento predeterminado del navegador
+            event.preventDefault();
+            
+            // Determinar la dirección del desplazamiento
+            const delta = Math.sign(event.deltaY);
+            
+            // Ajustar la distancia de zoom
+            currentZoomDistance += delta * ZOOM_SPEED;
+            
+            // Limitar el zoom mínimo y máximo
+            currentZoomDistance = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, currentZoomDistance));
+            
+            // Si el seguimiento automático está activado, actualizar la posición de la cámara
+            if (!isDraggingCamera) {
+                // Calcular la dirección desde la cámara al objetivo
+                const direction = new THREE.Vector3().subVectors(camera.position, cameraTarget).normalize();
+                
+                // Ajustar la posición de la cámara basándose en la nueva distancia
+                camera.position.copy(cameraTarget).addScaledVector(direction, currentZoomDistance);
+                
+                // Asegurar que la cámara sigue mirando al objetivo
+                camera.lookAt(cameraTarget);
+            }
+        }
+
+        function highlightNearestValidTile(tileIndex) {
+            // Restaurar colores originales primero
+            for (let i = 0; i < boardTiles.length; i++) {
+                if (validTileIndices.includes(i)) {
+                    boardTiles[i].material.color.set(0x90EE90); // Verde claro para casillas válidas
+                } else if (i === 0) {
+                    boardTiles[i].material.color.set(0x00FF00); // Verde para inicio
+                } else if (i === boardTiles.length - 1) {
+                    boardTiles[i].material.color.set(0xFF0000); // Rojo para fin
+                } else {
+                    boardTiles[i].material.color.set(i % 2 === 0 ? 0xADD8E6 : 0x87CEEB); // Alternar azul claro
+                }
+            }
+            
+            // Resaltar la casilla más cercana si es válida
+            if (validTileIndices.includes(tileIndex)) {
+                boardTiles[tileIndex].material.color.set(0x00FF00); // Verde más brillante
+            }
+        }
+    </script>
+</body>
+</html>
