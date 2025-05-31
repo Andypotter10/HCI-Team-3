@@ -2,14 +2,14 @@
 
 ## Main Activities
 
-1. **Third Meeting with the Professor (#24)**
+1. **Third Meeting with the Professor **
    - Reviewed previous progress and discussed the next steps for the prototype.
 
-2. **Update of Requirements (#25)**
+2. **Update of Requirements **
    - Gathered new needs and adjustments to the prototype’s functionality.
    - Defined short- and medium-term goals for the second delivery.
 
-3. **Definition of the First Digital Prototype (#29)**
+3. **Definition of the First Digital Prototype **
    - Established design guidelines and the basic structure.
    - Started planning the interfaces and main navigation.
 
@@ -27,7 +27,7 @@
 
 ## Development Details
 
-- **Development of the First Digital Prototype (#29)**  
+- **Development of the First Digital Prototype **  
   - Implementation of the base structure and main logic.
   - Setup of initial interface elements.
 
