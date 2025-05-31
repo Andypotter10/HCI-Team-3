@@ -1,4 +1,4 @@
-## 2. Usability Analysis of the Digital Prototype
+## Usability Analysis of the Digital Prototype
 
 ### Included Usability Elements
 - **Distinct penguins on tiles:** Reinforce player identity and position.
@@ -15,16 +15,16 @@
 - **User control:** Sequential interface with well-defined actions.
 - **Clean aesthetics:** Minimalist design focused on the core action.
 
----
 
-## 3. Justification for Inclusion or Exclusion of Elements
+## Justification for Inclusion or Exclusion of Elements
 
 ### Adapted Elements – Why Were They Included?
-- **Digital modular board:** Maintains flexibility of the original game and enables multiple paths, supporting spatial thinking and replayability.
-- **Penguin pieces (avatars):** Essential for player identification, promoting a sense of ownership and continuity.
+- **Digital modular board:** Maintains flexibility of the original game and enables multiple paths, supporting thinking and replayability.
+- **Penguin pieces:** Essential for player identification, promoting a sense of ownership and continuity.
 - **Colored digital dice:** Visually replicate the logic of the physical game, promoting intuitive understanding and symbol-based learning.
 
+
 ### Non-Adapted Elements – Why Were They Excluded?
-- **Magnet on pieces:** Physical feedback is unnecessary in the digital environment; replaced by visual feedback including drag-and-drop movement.
-- **Free board assembly:** Although a creative moment in the physical game, it can be too complex for young children to manage digitally without assistance.
-- **Finger counting:** A concrete motor practice that cannot be effectively replicated on screen.
+- **Magnetic Feedback on Physical Pieces:** Physical tactility is not replicable in digital form; replaced by visual-based feedback for equivalent confirmation.
+- **Free board assembly:** Although it forms an important part of the game's diversity, it does not form a fundamental part of the game's function.
+- **Third party intervention:** Replaced by automatic error detection and correction prompts in the system.

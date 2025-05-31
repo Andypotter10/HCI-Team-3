@@ -1,0 +1,207 @@
+# Usability Testing Template
+
+## Direct User Observation Test
+
+**Objective:**  
+Observe how the participants interact with the digital prototype without intervention to identify issues related to instruction clarity, control usage, turn comprehension, and navigation of the 3D environment.
+
+### Participants
+- [Number of participants] children, ages [Age, range].
+- Experience with the physical game: [“none”, “some”].
+
+### Procedure 
+1. **Brief Introduction:**    
+   - Do not explain how to play in detail.  
+2. **Session Start:**  
+   - Each child sits at the computer.  
+   - Choose their avatar (Red or Blue).  
+3. **Initial Observation:**  
+   - Record how they locate the “Start Game” (Colocar tablero) button without assistance.  
+4. **First Turn:**  
+   - Allow one child at a time to take a first turn (e.g., roll dice and move token).  
+   - Record:  
+     - Time from “Your Turn” screen until clicking “Roll Dice” (or equivalent).  
+     - Any verbal questions or expressions of confusion.  
+     - Cursor movements indicating hesitation (e.g., hovering, back-and-forth).  
+5. **3D Camera Exploration:**  
+   - Observe whether and how participants discover how to rotate/zoom the camera.  
+6. **Second Turn:**  
+   - Check if participants can complete a second turn without help.  
+7. **Spontaneous Feedback:**  
+   - After the second turn, ask each child:  
+     - “Which parts did you find easy?”  
+     - “Which parts did you find difficult?”  
+8. **Wrap-up:**  
+   - Thank the participant and transition to the next child.
+
+### Observations & Notes
+- **Finding the “Start Game” Button:**  
+  - [e.g., “___ out of ___ located it within __ seconds.”]  
+  - [Comments on visibility, size, placement, etc.]
+
+- **First Turn Performance:**  
+  - Average time to click “Roll Dice”: [__ seconds].  
+  - Common mistakes (e.g., dragging instead of clicking, clicking wrong area).  
+  - Any verbalized confusion points.
+
+- **3D Camera Exploration:**  
+  - Number of participants who discovered rotation/zoom without help.  
+  - Average time until first successful camera adjustment.  
+  - Common confusions (e.g., “I thought the view was fixed.”).
+
+- **Second Turn Success Rate:**  
+  - [e.g., “__ out of __ completed without assistance.”]  
+  - Types of assistance requested (e.g., how to place the token).
+
+- **Spontaneous Feedback Highlights:**  
+  - [Bullet-list of common suggestions or pain points offered by participants.]
+
+
+## Specific Task Test
+
+**Objective:**  
+Measure execution times, errors, and assistance needed for defined tasks such as rolling dice, moving a token, and ending a turn.
+
+### Participants
+- [Number of participants] children, ages [Age range].  
+- Experience level with the digital game: [e.g., “none”].
+
+### Procedure
+1. **Brief Instruction:**  
+   - Explain how to start the game and the overall objective.  
+   - Do not describe each task in detail.  
+
+2. **Task 1: Roll Dice**  
+   - Instruction: “Click to roll the dice when it is your turn.”  
+   - Measure time from “Your Turn” prompt until dice result appears.  
+   - Note any misclicks or hesitations.  
+
+3. **Task 2: Move Token**  
+   - Instruction: “Move your token the number of spaces shown by the dice.”  
+   - Measure time from dice result until token is placed correctly.  
+   - Document errors (e.g., moving too far, wrong direction).  
+
+4. **Task 3: End Turn**  
+   - Instruction: “Click the ‘End Turn’ button (Confirmar movimiento) after moving your token.”  
+   - Measure time from token placement until “End Turn” is clicked.  
+   - Note if participants click too early, too late, or overlook the button.  
+
+5. **Repeat for Each Participant**  
+   - Record all times and errors in the table below.
+
+### Results Summary
+
+| Participant | Task 1: Roll Dice (s) | Errors T1               | Task 2: Move Token (s) | Errors T2                  | Task 3: End Turn (s) | Errors T3                  |
+|-------------|-----------------------|-------------------------|------------------------|----------------------------|----------------------|----------------------------|
+| [Name/ID 1] | [__]                  | [e.g., __]              | [__]                   | [e.g., __]                 | [__]                 | [e.g., __]                 |
+| [Name/ID 2] | [__]                  | [e.g., __]              | [__]                   | [e.g., __]                 | [__]                 | [e.g., __]                 |
+| …           | …                     | …                       | …                      | …                          | …                    | …                          |
+
+- **Average Times:**  
+  - Task 1: [__ seconds]  
+  - Task 2: [__ seconds]  
+  - Task 3: [__ seconds]  
+
+- **Observed Patterns:**  
+  - Task 1 common issues: [e.g., misclicking on text instead of dice].  
+  - Task 2 common issues: [e.g., confusion about direction].  
+  - Task 3 common issues: [e.g., button placement too close to other UI elements].
+
+## Physical vs. Digital Comparison Test
+
+**Objective:**  
+Compare the physical board game and the digital prototype in terms of engagement, rule comprehension, and social interaction.
+
+### Participants
+- [Number of participants] children, ages [Age range].  
+- Each participant plays both physical and digital in separate sessions (or split into two groups).
+
+### Procedure
+1. **Introduction:**  
+   - Explain the game rules briefly.  
+2. **Session 1 – Physical Version:**  
+   - Participants play the board game with physical board, dice, and tokens.  
+3. **Session 2 – Digital Version:**  
+   - Participants play the digital prototype on a computer.  
+4. **Observation:**  
+   - Record for each session:  
+     - Effective play time (time spent actively playing).  
+     - Social interaction (questions, laughter, disagreements).  
+     - Rule clarification requests.  
+5. **Group Discussion:**  
+   - Ask participants what they liked and didn’t like about each version.  
+6. **Quantitative Data Collection:**  
+   - Note number of illegal moves, rule disputes, and pauses for clarification.
+
+### Results
+
+1. **Engagement & Social Interaction:**  
+   - **Physical Session:**  
+     - [e.g., “Laughter and conversation occurred every __ turns.”]  
+     - [e.g., “Only __ clarifications (≈ __% of session).”]  
+   - **Digital Session:**  
+     - [e.g., “Fewer comments between turns; mostly focused on screen.”]  
+     - [e.g., “__ requests for technical help (≈ __% more than physical).”]
+
+2. **Rule Comprehension:**  
+   - **Physical:**  
+     - [e.g., “One illegal move every __ turns.”]  
+   - **Digital:**  
+     - [e.g., “One illegal move every __ turns; rules less obvious without tactile feedback.”]
+
+3. **Effective Play Time:**  
+   - **Physical:** [__ minutes of active play out of __ (___%)].  
+   - **Digital:** [__ minutes of active play out of __ (___%)], due to [e.g., navigation issues].
+
+4. **Qualitative Feedback:**  
+   - **Physical Version:** [e.g., “It’s fun to place pieces together with my friend.”]  
+   - **Digital Version:** [e.g., “I liked how the board looked, but sometimes I wasn’t sure where to click.”]
+
+## 5. Satisfaction Questionnaire
+
+**Objective:**  
+Collect quantitative feedback on overall experience: ease of use, learning curve, and satisfaction.
+
+### Questionnaire Design
+Use a 5-point Likert scale (1 = Strongly Disagree, 5 = Strongly Agree) for each statement:
+
+1. “It was easy to understand how to play the first time.”  
+2. “The controls to move the penguin are intuitive.”  
+3. “I could view player information without difficulty.”  
+4. “I liked the visual design of the game.”  
+5. “I would recommend this game to my friends.”
+
+### Participants
+- [Number of participants] children, ages [Age range], after completing the digital sessions.
+
+### Results Table
+
+| Statement                                                         | [Participant 1] Rating | [Participant 2] Rating | … | Average Rating |
+|-------------------------------------------------------------------|------------------------|------------------------|----|----------------|
+| 1. It was easy to understand how to play the first time.          | [__]                   | [__]                   | …  | [__]           |
+| 2. The controls to move the penguin are intuitive.                | [__]                   | [__]                   | …  | [__]           |
+| 3. I could view player information without difficulty.            | [__]                   | [__]                   | …  | [__]           |
+| 4. I liked the visual design of the game.                         | [__]                   | [__]                   | …  | [__]           |
+| 5. I would recommend this game to my friends.                     | [__]                   | [__]                   | …  | [__]           |
+
+- **Average Ratings:**  
+  - Calculate the average for each statement across all participants.
+
+### Interpretation Guidelines
+- Identify statements with the highest and lowest average ratings.  
+- Note large standard deviations to spot divergent opinions.  
+- Use this data to prioritize usability improvements (e.g., controls, visibility, visual design).
+
+# Overall Conclusions
+
+1. **Instruction Clarity:**  
+   - [Summarize whether core tasks were easily understood and suggest improvements.]
+
+2. **3D Camera & Board Controls:**  
+   - [Summarize how easily participants discovered camera controls and propose enhancements.]
+
+3. **Physical vs. Digital Experience (if applicable):**  
+   - [Compare social interaction, engagement, and rule comprehension between versions. List specific usability gaps.]
+
+4. **Satisfaction & Usability:**  
+   - [Highlight strong points and weak points. Provide targeted recommendations.]
