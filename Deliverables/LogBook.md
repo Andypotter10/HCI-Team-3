@@ -59,10 +59,10 @@
 
 ## Team Assignments
 
-| Team Member       | Prototype Assignment  | Tasks Assigned                                                                                                                                           |
-|-------------------|-----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Team Member       | Prototype Assignment  | Tasks Assigned                                                                                                                                          |
+|-------------------|-----------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Andres Ortiz**  | Digital Prototype     | Assigned to implement the base structure and main logic, as well as set up initial interface elements for the digital prototype (16 tasks).             |
-| **Juan Salazar**     | Digital Prototype     | Assigned to design and develop the user interfaces and interaction components for the digital prototype (12 tasks).                                      |
-| **Julio Ceball**   | Physical Prototype    | Assigned to assemble physical components and manage field testing logistics for the physical prototype (12 tasks).                                      |
-| **Luis**     | Physical Prototype    | Assigned to construct the physical prototype and adapt rules/mechanics to a tangible environment (12 tasks).                                           |
-| **Torres-David**  | Physical Prototype    | Assigned to conduct materials analysis and coordinate test sessions for the physical prototype (10 tasks).                                              |
+| **Juan Salazar**  | Digital Prototype     | Assigned to design and develop the user interfaces and interaction components for the digital prototype (12 tasks).                                     |
+| **Julio Ceball**  | Physical Prototype    | Assigned to assemble physical components and manage field testing logistics for the physical prototype (12 tasks).                                      |
+| **Luis**          | Physical Prototype    | Assigned to construct the physical prototype and adapt rules/mechanics to a tangible environment (12 tasks).                                            |
+| **Torres David**  | Physical Prototype    | Assigned to conduct materials analysis and coordinate test sessions for the physical prototype (10 tasks).                                              |
