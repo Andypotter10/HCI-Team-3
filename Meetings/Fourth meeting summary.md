@@ -12,4 +12,4 @@ It was agreed that it is not necessary to adapt all functional requirements for 
 
 Need to focus more on usability over full functionality to ensure the game is intuitive and easy to use during initial testing with students.
 
-Currently it is not necessary for the game to run on mobile.
+Currently it is not necessary for the game to run on mobile devices.
