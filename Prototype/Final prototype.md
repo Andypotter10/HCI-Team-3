@@ -11,7 +11,7 @@
 <img src="assets/Movement view.png" width="1800px">
 
 # Instructions view
-<img src="assets/Instruction view.png" width="1800px">
+<img src="assets/Instructions view.png" width="1800px">
 
 # End view
 <img src="assets/End view.png" width="1800px">
