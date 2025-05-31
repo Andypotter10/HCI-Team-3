@@ -11,13 +11,13 @@
 | **FR-08**  | Addition and Subtraction Rules | If both dice show the same color, players must add the values; if the colors are different, they must subtract.|
 
 ## Non-Functional Requirements
-|     **ID**  | **Name**                     | **Description**                                                                                                        |
-| ----------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| **NFR-U01** | Intuitive User Interface     | The interface must be visually engaging, age-appropriate, and easy to understand for children aged 5–7.                |
-| **NFR-U02** | Ease of Navigation           | Players must be able to perform key actions within 2–3 simple steps.                                                   |
-| **NFR-U03** | Consistent Interaction       | UI elements and game mechanics must behave consistently across all screens and actions to reduce confusion.            |
-| **NFR-U04** | Immediate Feedback           | The system must provide instant visual feedback after each user action.                                                |
-| **NFR-U05** | Error Tolerance and Recovery | The game should allow players to easily correct mistakes and provide support through hints.                            |
-| **NFR-U06** | Simple Language              | All on-screen text and instructions must use language suitable for primary school students.                            |
-| **NFR-U07** | Low Learning Curve           | New users must be able to understand game mechanics within the first 3–5 minutes, with help from an optional tutorial. |
-| **NFR-U09** | Platform Adaptability        | The game UI must adapt to various screen sizes without loss of usability.                                              |
+|   **ID**   | **Name**                     | **Description**                                                                                                        |
+| ---------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **NFR-01** | Intuitive User Interface     | The interface must be visually engaging, age-appropriate, and easy to understand for children aged 5–7.                |
+| **NFR-02** | Ease of Navigation           | Players must be able to perform key actions within 2–3 simple steps.                                                   |
+| **NFR-03** | Consistent Interaction       | UI elements and game mechanics must behave consistently across all screens and actions to reduce confusion.            |
+| **NFR-04** | Immediate Feedback           | The system must provide instant visual feedback after each user action.                                                |
+| **NFR-05** | Error Tolerance and Recovery | The game should allow players to easily correct mistakes and provide support through hints.                            |
+| **NFR-06** | Simple Language              | All on-screen text and instructions must use language suitable for primary school students.                            |
+| **NFR-07** | Low Learning Curve           | New users must be able to understand game mechanics within the first 3–5 minutes, with help from an optional tutorial. |
+| **NFR-08** | Platform Adaptability        | The game UI must adapt to various screen sizes without loss of usability.                                              |
