@@ -1,4 +1,5 @@
 # Más-menos, pingüinos en el hielo - Digital Version
+<img src="assets/Final Digital Version.png" width="1800px">
 
 ## Game Description
 "Más-menos, pingüinos en el hielo" is a digital educational game based on the board game designed by Lourdes Marisol Souza Noha and Genny Rocío Uicab Balloteb. The aim of the game is to reinforce arithmetic skills (addition and subtraction) in primary school children in a playful and interactive way.
