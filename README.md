@@ -1,3 +1,4 @@
+# First Delivery Video: https://youtu.be/kga4Jj5ViWs
 # Más-menos, pingüinos en el hielo - Digital Version
 <img src="assets/First Digital version.png" width="1800px">
 
