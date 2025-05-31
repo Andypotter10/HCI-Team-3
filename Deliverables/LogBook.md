@@ -66,9 +66,3 @@
 | **Julio Ceball**   | Physical Prototype    | Assigned to assemble physical components and manage field testing logistics for the physical prototype (12 tasks).                                      |
 | **Luis**     | Physical Prototype    | Assigned to construct the physical prototype and adapt rules/mechanics to a tangible environment (12 tasks).                                           |
 | **Torres-David**  | Physical Prototype    | Assigned to conduct materials analysis and coordinate test sessions for the physical prototype (10 tasks).                                              |
-
----
-
-
-
-**Logbook Responsible:** *Team 3*
