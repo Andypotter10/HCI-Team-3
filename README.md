@@ -23,3 +23,8 @@ The objective is to traverse the board and reach the last ice floe, encouraging 
 - **Interactive Digital Interface:** A digital adaptation of the original board game.
 - **Simple Game Dynamics:** Intuitive rules and movement mechanics based on arithmetic operations.
 - **Adaptable:** Possibility to add variants and additional rules to adjust the difficulty and expand the educational challenges.
+
+## Deliveries
+- [First Delivery](https://github.com/Andypotter10/HCI-Team-3/tree/first-delivery)
+- [Second Delivery](https://github.com/Andypotter10/HCI-Team-3/tree/second-delivery)
+- [Third Delivery](https://github.com/Andypotter10/HCI-Team-3/tree/third-delivery)
