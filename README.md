@@ -4,7 +4,7 @@
 ### [Third Delivery](https://github.com/Andypotter10/HCI-Team-3/tree/third-delivery)
 
 # Contributions
-In order to keep the project in order, a schedule was created using Github Projects: \
+In order to keep the project in order, a schedule was created using [Github Projects](https://github.com/users/Andypotter10/projects/3):  \
 ![image](https://github.com/user-attachments/assets/6edf88d8-2dbf-464b-82a6-e977f1a0cbae)
 
 In this schedule, the various tasks are designated, giving each task a score based on its difficulty and importance: \
